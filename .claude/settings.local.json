@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p public/magazines)",
+      "Bash(cp *.pdf public/magazines/)",
+      "Bash(mkdir -p public/covers)",
+      "Bash(qlmanage -t -s 800 -o public/covers \"public/magazines/OFFSHORE AFRICA MARCH 2026.pdf\")"
+    ]
+  }
+}
