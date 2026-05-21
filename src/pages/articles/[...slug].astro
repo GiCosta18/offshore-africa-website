@@ -1,0 +1,116 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
+
+export const getStaticPaths = (async () => {
+  const articles = await getCollection('articles');
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}) satisfies GetStaticPaths;
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const { title, date, author, category, excerpt } = article.data;
+
+const dateLabel = date.toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+// Reading time — ~200 words per minute.
+const words = article.body?.split(/\s+/).filter(Boolean).length ?? 0;
+const readingTime = Math.max(1, Math.round(words / 200));
+
+// Related articles — same category, newest first, max 3.
+const related = (await getCollection('articles'))
+  .filter((a) => a.id !== article.id && a.data.category === category)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const shareUrl = new URL(Astro.url.pathname, Astro.site).href;
+const enc = encodeURIComponent;
+const shares = [
+  { name: 'X', href: `https://twitter.com/intent/tweet?url=${enc(shareUrl)}&text=${enc(title)}` },
+  { name: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(shareUrl)}` },
+  { name: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${enc(shareUrl)}` },
+];
+---
+
+<Base title={title} description={excerpt} article={true}>
+  <article>
+    <!-- Article header -->
+    <header class="bg-navy text-cream seismic-bg">
+      <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <a
+          href={`/articles/?category=${encodeURIComponent(category)}`}
+          class="label inline-block rounded-sm bg-gold px-3 py-1 text-[0.65rem] text-navy"
+          >{category}</a
+        >
+        <h1 class="mt-5 font-serif text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">
+          {title}
+        </h1>
+        <p class="mt-5 max-w-2xl text-lg text-cream/75">{excerpt}</p>
+        <div class="label mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-cream/60">
+          <span class="text-gold">{author}</span>
+          <span aria-hidden="true">&middot;</span>
+          <time datetime={date.toISOString()}>{dateLabel}</time>
+          <span aria-hidden="true">&middot;</span>
+          <span>{readingTime} min read</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Article body -->
+    <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="prose-article">
+        <Content />
+      </div>
+
+      <!-- Share -->
+      <div class="mt-12 flex flex-wrap items-center gap-3 border-t border-charcoal/10 pt-6">
+        <span class="label text-xs text-charcoal/60">Share this article</span>
+        {
+          shares.map((s) => (
+            <a
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="label rounded-sm border border-charcoal/20 px-3.5 py-1.5 text-[0.7rem] text-navy transition-colors hover:border-gold hover:text-gold-dark"
+            >
+              {s.name}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </article>
+
+  <!-- Related articles -->
+  {
+    related.length > 0 && (
+      <section class="border-t border-charcoal/10 bg-cream">
+        <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <p class="label text-xs text-gold-dark">Keep reading</p>
+          <h2 class="mt-1 font-serif text-2xl font-bold text-navy">
+            Related Articles
+          </h2>
+          <div class="mt-7 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((a) => (
+              <ArticleCard article={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <NewsletterSignup />
+  </section>
+</Base>

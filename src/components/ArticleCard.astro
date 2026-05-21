@@ -1,0 +1,69 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  article: CollectionEntry<'articles'>;
+}
+const { article } = Astro.props;
+const { title, date, category, excerpt } = article.data;
+
+const dateLabel = date.toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
+
+// Each category gets its own placeholder-thumbnail tint.
+const tints: Record<string, string> = {
+  'Oil & Gas': 'from-petrol to-navy',
+  Gas: 'from-gold-dark to-petrol',
+  Mining: 'from-navy-700 to-charcoal',
+  Downstream: 'from-petrol to-navy-700',
+  'Company News': 'from-navy to-petrol',
+  Interviews: 'from-charcoal to-petrol',
+};
+const tint = tints[category] ?? 'from-petrol to-navy';
+---
+
+<article
+  class="group flex flex-col overflow-hidden rounded-sm border border-charcoal/10 bg-white shadow-sm transition-shadow hover:shadow-xl"
+>
+  <a href={`/articles/${article.id}/`} class="block">
+    <!-- Placeholder thumbnail -->
+    <div
+      class:list={[
+        'relative flex aspect-[16/10] items-end bg-gradient-to-br p-4',
+        tint,
+      ]}
+    >
+      <div
+        class="pointer-events-none absolute inset-0 opacity-[0.12]"
+        style="background-image: repeating-linear-gradient(135deg, #fff 0 2px, transparent 2px 22px);"
+      >
+      </div>
+      <span class="label rounded-sm bg-gold px-2.5 py-1 text-[0.65rem] text-navy">
+        {category}
+      </span>
+    </div>
+  </a>
+  <div class="flex flex-1 flex-col p-5">
+    <time datetime={date.toISOString()} class="label text-[0.65rem] text-gold-dark">
+      {dateLabel}
+    </time>
+    <h3 class="mt-2 font-serif text-xl font-bold leading-snug text-navy">
+      <a href={`/articles/${article.id}/`} class="hover:text-gold-dark">
+        {title}
+      </a>
+    </h3>
+    <p class="mt-2 flex-1 text-sm leading-relaxed text-charcoal/70">
+      {excerpt.length > 150 ? excerpt.slice(0, 150).trimEnd() + '…' : excerpt}
+    </p>
+    <a
+      href={`/articles/${article.id}/`}
+      class="label mt-4 inline-flex items-center gap-1.5 text-[0.7rem] text-navy hover:text-gold-dark"
+    >
+      Read Article
+      <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">&rarr;</span>
+    </a>
+  </div>
+</article>

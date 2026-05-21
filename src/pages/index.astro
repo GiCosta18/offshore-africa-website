@@ -1,0 +1,194 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import IssueCard from '../components/IssueCard.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import { INDUSTRY_SECTIONS } from '../consts';
+
+const articles = (await getCollection('articles')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const latestArticles = articles.slice(0, 6);
+
+const issues = (await getCollection('issues')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const featuredIssue = issues[0];
+const recentIssues = issues.slice(0, 3);
+---
+
+<Base>
+  <Hero
+    latestIssueHref={featuredIssue.data.pdf}
+    latestIssueLabel={featuredIssue.data.title}
+  />
+
+  <!-- Recent issues strip below hero -->
+  <section class="border-b border-charcoal/10 bg-cream">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <p class="label text-xs text-gold-dark">Latest from the newsstand</p>
+          <h2 class="mt-1 font-serif text-2xl font-bold text-navy sm:text-3xl">
+            Recent Issues
+          </h2>
+        </div>
+        <a
+          href="/issues/"
+          class="label hidden text-xs text-navy hover:text-gold-dark sm:inline"
+          >Full Archive &rarr;</a
+        >
+      </div>
+      <div class="mt-7 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          recentIssues.map((issue, i) => (
+            <IssueCard issue={issue} isNew={i < 3} />
+          ))
+        }
+      </div>
+      <a
+        href="/issues/"
+        class="label mt-6 inline-block text-xs text-navy hover:text-gold-dark sm:hidden"
+        >Full Archive &rarr;</a
+      >
+    </div>
+  </section>
+
+  <!-- Latest articles -->
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <p class="label text-xs text-gold-dark">Analysis &amp; reporting</p>
+        <h2 class="mt-1 font-serif text-2xl font-bold text-navy sm:text-3xl">
+          Latest Articles
+        </h2>
+      </div>
+      <a
+        href="/articles/"
+        class="label hidden text-xs text-navy hover:text-gold-dark sm:inline"
+        >All Articles &rarr;</a
+      >
+    </div>
+    <div class="mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+      {latestArticles.map((article) => <ArticleCard article={article} />)}
+    </div>
+    <a
+      href="/articles/"
+      class="label mt-7 inline-block text-xs text-navy hover:text-gold-dark sm:hidden"
+      >All Articles &rarr;</a
+    >
+  </section>
+
+  <!-- Featured issue -->
+  <section class="bg-navy text-cream seismic-bg">
+    <div class="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8">
+      <!-- Cover placeholder -->
+      <div class="mx-auto w-full max-w-sm">
+        <div
+          class="aspect-[3/4] rounded-sm border border-gold/30 bg-navy-700 p-8 shadow-2xl"
+        >
+          <div class="flex h-full flex-col">
+            <p class="label text-xs text-gold">Offshore Africa</p>
+            <p class="label text-[0.6rem] text-cream/55">
+              Energy &middot; Mining &middot; Oil &amp; Gas
+            </p>
+            <div class="my-auto">
+              <p class="font-serif text-5xl font-extrabold leading-none text-gold">
+                {featuredIssue.data.title.split(' ')[0]}
+              </p>
+              <p class="font-serif text-3xl font-bold text-cream/90">
+                {featuredIssue.data.title.split(' ')[1]}
+              </p>
+            </div>
+            <div class="mt-auto border-t border-gold/30 pt-3">
+              <p class="label text-[0.6rem] text-cream/70">Current Issue</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="label text-xs text-gold">Featured Issue</p>
+        <h2 class="mt-2 font-serif text-3xl font-bold sm:text-4xl">
+          {featuredIssue.data.title} Edition
+        </h2>
+        <p class="mt-4 max-w-lg text-cream/75">
+          Our latest edition brings you in-depth coverage of Africa's energy
+          and mining landscape — field updates, exclusive interviews, and the
+          analysis decision-makers rely on. Read it free, or subscribe to
+          receive every issue in your inbox.
+        </p>
+        <p class="label mt-4 text-[0.7rem] text-cream/55">
+          PDF &middot; {featuredIssue.data.pdfSize}
+        </p>
+        <div class="mt-7 flex flex-wrap gap-4">
+          <a
+            href={featuredIssue.data.pdf}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="label rounded-sm bg-gold px-6 py-3 text-sm text-navy transition-colors hover:bg-gold-dark"
+            >Read This Issue</a
+          >
+          <a
+            href="/subscribe/"
+            class="label rounded-sm border border-cream/30 px-6 py-3 text-sm text-cream transition-colors hover:border-gold hover:text-gold"
+            >Subscribe to Receive It</a
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Industry sections -->
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <p class="label text-xs text-gold-dark">Explore the coverage</p>
+      <h2 class="mt-1 font-serif text-2xl font-bold text-navy sm:text-3xl">
+        Industry Sections
+      </h2>
+    </div>
+    <div class="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        INDUSTRY_SECTIONS.map((section) => (
+          <a
+            href={`/articles/?category=${encodeURIComponent(section.name)}`}
+            class="group flex flex-col rounded-sm border border-charcoal/10 bg-white p-6 shadow-sm transition-all hover:border-gold hover:shadow-lg"
+          >
+            <span class="h-1 w-10 bg-gold transition-all group-hover:w-16" />
+            <h3 class="mt-4 font-serif text-xl font-bold text-navy">
+              {section.name}
+            </h3>
+            <p class="mt-2 flex-1 text-sm text-charcoal/70">{section.blurb}</p>
+            <span class="label mt-4 text-[0.7rem] text-gold-dark">
+              View Articles &rarr;
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- About teaser -->
+  <section class="border-y border-charcoal/10 bg-cream">
+    <div class="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 lg:px-8">
+      <p class="label text-xs text-gold-dark">About the Magazine</p>
+      <p class="mt-4 font-serif text-2xl font-medium leading-relaxed text-navy sm:text-3xl">
+        Offshore Africa Magazine is a premier monthly publication delivering
+        expert opinions, in-depth analysis, and key insights into Africa's
+        energy, mining, oil, and gas industries.
+      </p>
+      <a
+        href="/about/"
+        class="label mt-7 inline-block rounded-sm border border-navy/25 px-7 py-3 text-sm text-navy transition-colors hover:border-gold hover:text-gold-dark"
+        >Learn More</a
+      >
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <NewsletterSignup />
+  </section>
+</Base>

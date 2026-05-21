@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import IssueCard from '../../components/IssueCard.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
+
+const issues = (await getCollection('issues')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Base
+  title="Magazine Archive"
+  description="Browse and download past issues of Offshore Africa Magazine — Africa's premier monthly energy, mining, oil and gas publication."
+>
+  <!-- Hero banner -->
+  <section class="bg-navy text-cream seismic-bg">
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <p class="label flex items-center gap-3 text-xs text-gold">
+        <span class="h-px w-10 bg-gold"></span>The Archive
+      </p>
+      <h1 class="mt-4 font-serif text-4xl font-extrabold sm:text-5xl">
+        Magazine Archive
+      </h1>
+      <p class="mt-4 max-w-2xl text-lg text-cream/75">
+        Browse and download past issues of Offshore Africa Magazine.
+      </p>
+      <p class="label mt-3 text-xs text-cream/55">
+        {issues.length} issues available
+      </p>
+    </div>
+  </section>
+
+  <!-- Issue grid -->
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        issues.map((issue, i) => (
+          <IssueCard issue={issue} isNew={i < 3} />
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <NewsletterSignup
+      heading="Never miss an issue"
+      text="Subscribe and get every new edition delivered to your inbox the day it publishes."
+    />
+  </section>
+</Base>

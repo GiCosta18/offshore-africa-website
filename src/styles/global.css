@@ -1,0 +1,152 @@
+@import 'tailwindcss';
+
+/* ---- Offshore Africa Magazine design tokens ---- */
+@theme {
+  --color-navy: #0a1628;
+  --color-navy-700: #122440;
+  --color-petrol: #1b3a5c;
+  --color-gold: #d4a853;
+  --color-gold-dark: #b8902f;
+  --color-cream: #f5f0eb;
+  --color-charcoal: #1a1a1a;
+  --color-paper: #fafaf7;
+
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Source Sans 3', system-ui, sans-serif;
+  --font-label: 'Oswald', 'Arial Narrow', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-sans);
+  color: var(--color-charcoal);
+  background: var(--color-paper);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Condensed uppercase labels for section eyebrows and tags */
+.label {
+  font-family: var(--font-label);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+}
+
+/* Seismic / topographic line motif used behind dark hero sections */
+.seismic-bg {
+  background-image:
+    repeating-linear-gradient(
+      115deg,
+      transparent 0 38px,
+      rgba(212, 168, 83, 0.05) 38px 39px
+    ),
+    radial-gradient(
+      ellipse 60% 80% at 80% 20%,
+      rgba(27, 58, 92, 0.55),
+      transparent 70%
+    );
+}
+
+/* Animated seismic wave lines */
+.wave-lines {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.35;
+  pointer-events: none;
+}
+.wave-lines svg {
+  width: 100%;
+  height: 100%;
+}
+.wave-path {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 1.5;
+  animation: drift 14s ease-in-out infinite alternate;
+}
+.wave-path:nth-child(2) {
+  animation-duration: 19s;
+  opacity: 0.6;
+}
+.wave-path:nth-child(3) {
+  animation-duration: 24s;
+  opacity: 0.4;
+}
+@keyframes drift {
+  from {
+    transform: translateX(-4%) translateY(0);
+  }
+  to {
+    transform: translateX(4%) translateY(-12px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wave-path {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Long-form article typography */
+.prose-article {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: #2a2a2a;
+}
+.prose-article h2 {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 2.25rem 0 0.85rem;
+}
+.prose-article h3 {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  margin: 1.75rem 0 0.6rem;
+}
+.prose-article p {
+  margin: 0 0 1.25rem;
+}
+.prose-article a {
+  color: var(--color-gold-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-article blockquote {
+  border-left: 3px solid var(--color-gold);
+  padding: 0.25rem 0 0.25rem 1.5rem;
+  margin: 1.75rem 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--color-petrol);
+}
+.prose-article ul,
+.prose-article ol {
+  margin: 0 0 1.25rem 1.5rem;
+}
+.prose-article ul {
+  list-style: disc;
+}
+.prose-article ol {
+  list-style: decimal;
+}
+.prose-article li {
+  margin-bottom: 0.4rem;
+}
+.prose-article img {
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}
+.prose-article strong {
+  color: var(--color-navy);
+}

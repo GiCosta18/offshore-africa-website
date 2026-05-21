@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  issue: CollectionEntry<'issues'>;
+  isNew?: boolean;
+}
+const { issue, isNew = false } = Astro.props;
+const { title, pdf, pdfSize } = issue.data;
+const [month, year] = title.split(' ');
+---
+
+<article
+  class="group flex flex-col overflow-hidden rounded-sm border border-charcoal/10 bg-white shadow-sm transition-shadow hover:shadow-xl"
+>
+  <!-- Styled placeholder magazine cover -->
+  <div class="relative aspect-[3/4] bg-navy seismic-bg p-6 text-cream">
+    {
+      isNew && (
+        <span class="label absolute right-3 top-3 rounded-sm bg-gold px-2.5 py-1 text-[0.6rem] text-navy">
+          New
+        </span>
+      )
+    }
+    <div class="flex h-full flex-col">
+      <p class="label text-[0.6rem] text-gold">Offshore Africa</p>
+      <p class="label text-[0.55rem] text-cream/55">Energy &middot; Mining &middot; Oil &amp; Gas</p>
+
+      <div class="my-auto">
+        <p class="font-serif text-4xl font-extrabold leading-none text-gold">{month}</p>
+        <p class="font-serif text-2xl font-bold text-cream/90">{year}</p>
+      </div>
+
+      <div class="mt-auto border-t border-gold/30 pt-3">
+        <p class="label text-[0.6rem] text-cream/70">Monthly Issue</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-1 flex-col p-5">
+    <h3 class="font-serif text-xl font-bold text-navy">{title}</h3>
+    <p class="label mt-1 text-[0.65rem] text-charcoal/55">PDF &middot; {pdfSize}</p>
+
+    <div class="mt-4 flex flex-1 flex-col justify-end gap-2">
+      <a
+        href={pdf}
+        download
+        class="label rounded-sm bg-navy px-4 py-2.5 text-center text-[0.7rem] text-cream transition-colors hover:bg-petrol"
+      >
+        Download PDF
+      </a>
+      <a
+        href={pdf}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="label rounded-sm border border-navy/25 px-4 py-2.5 text-center text-[0.7rem] text-navy transition-colors hover:border-gold hover:text-gold-dark"
+      >
+        View Online
+      </a>
+    </div>
+  </div>
+</article>

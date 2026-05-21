@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { CONTACT } from '../consts';
+
+const tel = (n: string) => n.replace(/[^+\d]/g, '');
+---
+
+<Base
+  title="Contact"
+  description="Get in touch with Offshore Africa Magazine — general enquiries, advertising, editorial submissions and partnerships."
+>
+  <!-- Hero -->
+  <section class="bg-navy text-cream seismic-bg">
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <p class="label flex items-center gap-3 text-xs text-gold">
+        <span class="h-px w-10 bg-gold"></span>Get In Touch
+      </p>
+      <h1 class="mt-4 font-serif text-4xl font-extrabold sm:text-5xl">Contact Us</h1>
+      <p class="mt-4 max-w-2xl text-lg text-cream/75">
+        Questions, story tips, advertising or partnerships — we would love to
+        hear from you.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="grid gap-12 lg:grid-cols-3">
+      <!-- Form -->
+      <div class="lg:col-span-2">
+        <h2 class="font-serif text-2xl font-bold text-navy">Send a message</h2>
+        <p class="mt-1 text-sm text-charcoal/70">
+          Fill in the form and our team will respond as soon as possible.
+        </p>
+        <div class="mt-6">
+          <ContactForm />
+        </div>
+      </div>
+
+      <!-- Details -->
+      <aside class="space-y-8">
+        <div>
+          <h2 class="label text-xs text-gold-dark">Email</h2>
+          <a
+            href={`mailto:${CONTACT.email}`}
+            class="mt-1 block text-navy hover:text-gold-dark"
+            >{CONTACT.email}</a
+          >
+        </div>
+        <div>
+          <h2 class="label text-xs text-gold-dark">Phone</h2>
+          <a
+            href={`tel:${tel(CONTACT.phonePrimary)}`}
+            class="mt-1 block text-navy hover:text-gold-dark"
+            >{CONTACT.phonePrimary}</a
+          >
+          <a
+            href={`tel:${tel(CONTACT.phoneSecondary)}`}
+            class="mt-1 block text-navy hover:text-gold-dark"
+            >{CONTACT.phoneSecondary}</a
+          >
+        </div>
+        <div>
+          <h2 class="label text-xs text-gold-dark">Instagram</h2>
+          <a
+            href={CONTACT.instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-1 block text-navy hover:text-gold-dark"
+            >@{CONTACT.instagram}</a
+          >
+        </div>
+        <div>
+          <h2 class="label text-xs text-gold-dark">Office</h2>
+          <p class="mt-1 text-navy">{CONTACT.address}</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>

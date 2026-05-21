@@ -1,0 +1,67 @@
+---
+import { SITE } from '../consts';
+
+interface Props {
+  latestIssueHref: string;
+  latestIssueLabel: string;
+}
+const { latestIssueHref, latestIssueLabel } = Astro.props;
+---
+
+<section class="relative overflow-hidden bg-navy text-cream seismic-bg">
+  <!-- Animated seismic wave motif -->
+  <div class="wave-lines" aria-hidden="true">
+    <svg viewBox="0 0 1440 600" preserveAspectRatio="none">
+      <path
+        class="wave-path"
+        d="M-100 200 C 200 120, 400 280, 720 200 S 1240 120, 1540 220"></path>
+      <path
+        class="wave-path"
+        d="M-100 320 C 240 240, 480 400, 720 320 S 1260 240, 1540 340"></path>
+      <path
+        class="wave-path"
+        d="M-100 440 C 220 360, 460 520, 720 440 S 1240 360, 1540 460"></path>
+    </svg>
+  </div>
+
+  <div
+    class="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8 lg:py-40"
+  >
+    <div class="max-w-3xl">
+      <p class="label flex items-center gap-3 text-xs text-gold sm:text-sm">
+        <span class="h-px w-10 bg-gold"></span>
+        Monthly &middot; Since 2017
+      </p>
+      <h1
+        class="mt-5 font-serif text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+      >
+        Offshore Africa<br />
+        <span class="text-gold">Magazine</span>
+      </h1>
+      <p class="mt-6 max-w-xl text-lg text-cream/80 sm:text-xl">
+        {SITE.tagline}
+      </p>
+      <p class="mt-3 max-w-xl text-sm leading-relaxed text-cream/60">
+        Expert opinion, in-depth analysis and key insights into Africa's
+        energy, mining, oil and gas industries.
+      </p>
+
+      <div class="mt-9 flex flex-wrap gap-4">
+        <a
+          href="/subscribe/"
+          class="label rounded-sm bg-gold px-7 py-3.5 text-sm text-navy transition-colors hover:bg-gold-dark"
+          >Subscribe</a
+        >
+        <a
+          href={latestIssueHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="label rounded-sm border border-cream/30 px-7 py-3.5 text-sm text-cream transition-colors hover:border-gold hover:text-gold"
+          >Latest Issue &middot; {latestIssueLabel}</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute inset-x-0 bottom-0 h-1 bg-gold"></div>
+</section>

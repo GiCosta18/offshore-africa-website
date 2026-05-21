@@ -1,0 +1,158 @@
+---
+import Base from '../layouts/Base.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+
+const team = [
+  { name: 'Gilbert Da Costa', role: 'Editor-in-Chief' },
+  { name: 'Editorial Desk', role: 'Energy & Oil and Gas' },
+  { name: 'Editorial Desk', role: 'Mining & Minerals' },
+  { name: 'Editorial Desk', role: 'Downstream & Energy Transition' },
+];
+
+const coverage = [
+  {
+    title: 'Oil & Gas',
+    text: 'Upstream exploration, offshore field developments, licensing rounds and production updates across the continent.',
+  },
+  {
+    title: 'Mining',
+    text: "Gold, bauxite, lithium and the critical minerals driving Africa's role in the global energy supply chain.",
+  },
+  {
+    title: 'Downstream',
+    text: 'Refining, distribution, retail fuels and petrochemicals — the value chain that brings energy to market.',
+  },
+  {
+    title: 'Energy Transition',
+    text: 'Gas-to-power, renewables and the policy shaping how Africa balances growth with a lower-carbon future.',
+  },
+];
+---
+
+<Base
+  title="About"
+  description="Offshore Africa Magazine is a premier monthly publication delivering expert opinion and in-depth analysis of Africa's energy, mining, oil and gas industries."
+>
+  <!-- Hero -->
+  <section class="bg-navy text-cream seismic-bg">
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <p class="label flex items-center gap-3 text-xs text-gold">
+        <span class="h-px w-10 bg-gold"></span>About the Magazine
+      </p>
+      <h1 class="mt-4 max-w-3xl font-serif text-4xl font-extrabold leading-tight sm:text-5xl">
+        The authoritative voice of African energy journalism
+      </h1>
+    </div>
+  </section>
+
+  <!-- Mission -->
+  <section class="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+    <p class="font-serif text-2xl font-medium leading-relaxed text-navy">
+      Offshore Africa Magazine is a premier monthly publication delivering
+      expert opinions, in-depth analysis, and key insights into Africa's
+      energy, mining, oil, and gas industries.
+    </p>
+    <div class="mt-6 space-y-4 text-charcoal/80 leading-relaxed">
+      <p>
+        Since our founding, the magazine has reported from the heart of the
+        continent's most consequential energy story — the discoveries, the
+        developments, the deals and the policy decisions that are reshaping how
+        Africa produces and uses its resources.
+      </p>
+      <p>
+        Our mission is straightforward: to give industry professionals,
+        investors, policymakers and partners the clear, credible reporting they
+        need to make decisions. We cover the news, but we also explain it —
+        connecting a single discovery to the wider trajectory of a basin, a
+        country, and a continent.
+      </p>
+      <p>
+        Each monthly edition combines field reporting, exclusive interviews and
+        rigorous analysis, delivered as a professionally produced magazine to a
+        readership that spans the African energy and mining value chain.
+      </p>
+    </div>
+  </section>
+
+  <!-- What we cover -->
+  <section class="border-y border-charcoal/10 bg-cream">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <p class="label text-xs text-gold-dark">What We Cover</p>
+      <h2 class="mt-1 font-serif text-3xl font-bold text-navy">
+        Across the energy &amp; mining value chain
+      </h2>
+      <div class="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          coverage.map((c) => (
+            <div class="rounded-sm border border-charcoal/10 bg-white p-6 shadow-sm">
+              <span class="block h-1 w-10 bg-gold" />
+              <h3 class="mt-4 font-serif text-xl font-bold text-navy">
+                {c.title}
+              </h3>
+              <p class="mt-2 text-sm text-charcoal/70">{c.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Editorial team -->
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <p class="label text-xs text-gold-dark">Editorial Team</p>
+    <h2 class="mt-1 font-serif text-3xl font-bold text-navy">
+      The people behind the reporting
+    </h2>
+    <div class="mt-9 grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        team.map((member) => (
+          <div class="text-center">
+            <div class="mx-auto flex aspect-square w-full max-w-[180px] items-center justify-center rounded-sm bg-navy seismic-bg">
+              <span class="font-serif text-4xl font-extrabold text-gold">
+                {member.name
+                  .split(' ')
+                  .map((w) => w[0])
+                  .join('')
+                  .slice(0, 2)}
+              </span>
+            </div>
+            <h3 class="mt-3 font-serif text-lg font-bold text-navy">
+              {member.name}
+            </h3>
+            <p class="label text-[0.65rem] text-gold-dark">{member.role}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Partner / advertiser CTA -->
+  <section class="bg-navy text-cream seismic-bg">
+    <div class="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 lg:px-8">
+      <p class="label text-xs text-gold">Partner With Us</p>
+      <h2 class="mt-2 font-serif text-3xl font-bold sm:text-4xl">
+        Reach Africa's energy decision-makers
+      </h2>
+      <p class="mx-auto mt-4 max-w-xl text-cream/75">
+        From advertising to sponsored content and editorial partnerships, we
+        help brands connect with a focused, senior industry audience.
+      </p>
+      <div class="mt-7 flex flex-wrap justify-center gap-4">
+        <a
+          href="/advertise/"
+          class="label rounded-sm bg-gold px-6 py-3 text-sm text-navy transition-colors hover:bg-gold-dark"
+          >Advertising Options</a
+        >
+        <a
+          href="/contact/"
+          class="label rounded-sm border border-cream/30 px-6 py-3 text-sm text-cream transition-colors hover:border-gold hover:text-gold"
+          >Make an Enquiry</a
+        >
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <NewsletterSignup />
+  </section>
+</Base>

@@ -1,0 +1,140 @@
+---
+interface Props {
+  variant?: 'dark' | 'light';
+  withName?: boolean;
+  heading?: string;
+  text?: string;
+}
+const {
+  variant = 'dark',
+  withName = false,
+  heading = 'Stay ahead of the industry',
+  text = "Get Africa's energy, mining and oil & gas headlines delivered to your inbox.",
+} = Astro.props;
+
+const dark = variant === 'dark';
+const fid = `nl-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div
+  class:list={[
+    'rounded-sm',
+    dark ? 'bg-navy text-cream seismic-bg' : 'border border-gold/40 bg-cream text-charcoal',
+  ]}
+>
+  <div class="px-6 py-10 sm:px-10 sm:py-12">
+    <div class="mx-auto max-w-3xl text-center">
+      <p class:list={['label text-xs', dark ? 'text-gold' : 'text-gold-dark']}>
+        Newsletter
+      </p>
+      <h2
+        class:list={[
+          'mt-2 font-serif text-2xl font-bold sm:text-3xl',
+          dark ? 'text-cream' : 'text-navy',
+        ]}
+      >
+        {heading}
+      </h2>
+      <p class:list={['mt-2 text-sm', dark ? 'text-cream/70' : 'text-charcoal/70']}>
+        {text}
+      </p>
+
+      <form
+        class="newsletter-form mt-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-center"
+        novalidate
+      >
+        {
+          withName && (
+            <div class="sm:w-44">
+              <label class="sr-only" for={`${fid}-name`}>
+                Name
+              </label>
+              <input
+                id={`${fid}-name`}
+                name="name"
+                type="text"
+                autocomplete="name"
+                placeholder="Your name"
+                class="w-full rounded-sm border border-charcoal/20 bg-white px-4 py-3 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
+              />
+            </div>
+          )
+        }
+        <div class="sm:w-72">
+          <label class="sr-only" for={`${fid}-email`}>Email address</label>
+          <input
+            id={`${fid}-email`}
+            name="email"
+            type="email"
+            required
+            autocomplete="email"
+            placeholder="you@example.com"
+            class="w-full rounded-sm border border-charcoal/20 bg-white px-4 py-3 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
+          />
+        </div>
+        <button
+          type="submit"
+          class="label rounded-sm bg-gold px-6 py-3 text-sm text-navy transition-colors hover:bg-gold-dark disabled:opacity-60"
+        >
+          Subscribe
+        </button>
+      </form>
+      <p
+        class="newsletter-msg mt-3 hidden text-sm"
+        role="status"
+        aria-live="polite"
+      >
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SIGNUP_API =
+    import.meta.env.PUBLIC_SIGNUP_API_URL || 'http://localhost:3000/public/signup';
+
+  document.querySelectorAll<HTMLFormElement>('.newsletter-form').forEach((form) => {
+    const msg = form.parentElement?.querySelector<HTMLElement>('.newsletter-msg');
+    const button = form.querySelector<HTMLButtonElement>('button[type=submit]');
+
+    const show = (text: string, ok: boolean) => {
+      if (!msg) return;
+      msg.textContent = text;
+      msg.classList.remove('hidden');
+      msg.style.color = ok ? '#1f7a3d' : '#b3261e';
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const email = String(data.get('email') || '').trim();
+      const name = String(data.get('name') || '').trim();
+
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        show('Please enter a valid email address.', false);
+        return;
+      }
+
+      if (button) button.disabled = true;
+      show('Submitting…', true);
+
+      try {
+        const res = await fetch(SIGNUP_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name }),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        show('Check your email to confirm your subscription.', true);
+        form.reset();
+      } catch {
+        show(
+          'Sorry — we could not complete your signup. Please try again later.',
+          false,
+        );
+      } finally {
+        if (button) button.disabled = false;
+      }
+    });
+  });
+</script>

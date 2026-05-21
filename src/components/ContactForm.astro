@@ -1,0 +1,148 @@
+---
+interface Props {
+  subjects?: string[];
+  defaultSubject?: string;
+}
+const {
+  subjects = ['General Inquiry', 'Advertising', 'Submissions', 'Partnership'],
+  defaultSubject,
+} = Astro.props;
+---
+
+<form id="contact-form" class="space-y-5" novalidate>
+  <!-- Web3Forms access key — injected from PUBLIC_WEB3FORMS_KEY at build -->
+  <input type="hidden" name="access_key" id="w3f-key" />
+  <input type="hidden" name="from_name" value="Offshore Africa Magazine Website" />
+  <input type="hidden" name="subject" id="w3f-subject" value="New website enquiry" />
+  <!-- Honeypot anti-spam field -->
+  <input type="checkbox" name="botcheck" class="hidden" style="display:none" tabindex="-1" autocomplete="off" />
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div>
+      <label for="cf-name" class="label block text-xs text-navy">Name</label>
+      <input
+        id="cf-name"
+        name="name"
+        type="text"
+        required
+        autocomplete="name"
+        class="mt-1.5 w-full rounded-sm border border-charcoal/20 bg-white px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
+      />
+    </div>
+    <div>
+      <label for="cf-email" class="label block text-xs text-navy">Email</label>
+      <input
+        id="cf-email"
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        class="mt-1.5 w-full rounded-sm border border-charcoal/20 bg-white px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
+      />
+    </div>
+  </div>
+
+  <div>
+    <label for="cf-subject" class="label block text-xs text-navy">Subject</label>
+    <select
+      id="cf-subject"
+      name="enquiry_type"
+      class="mt-1.5 w-full rounded-sm border border-charcoal/20 bg-white px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
+    >
+      {
+        subjects.map((s) => (
+          <option value={s} selected={s === defaultSubject}>
+            {s}
+          </option>
+        ))
+      }
+    </select>
+  </div>
+
+  <div>
+    <label for="cf-message" class="label block text-xs text-navy">Message</label>
+    <textarea
+      id="cf-message"
+      name="message"
+      rows="6"
+      required
+      class="mt-1.5 w-full rounded-sm border border-charcoal/20 bg-white px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
+    ></textarea>
+  </div>
+
+  <button
+    type="submit"
+    id="cf-submit"
+    class="label rounded-sm bg-navy px-7 py-3.5 text-sm text-cream transition-colors hover:bg-petrol disabled:opacity-60"
+  >
+    Send Message
+  </button>
+
+  <p id="cf-msg" class="hidden text-sm" role="status" aria-live="polite"></p>
+</form>
+
+<script>
+  const KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY || 'YOUR_WEB3FORMS_KEY';
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const keyField = document.getElementById('w3f-key') as HTMLInputElement | null;
+  const subjectField = document.getElementById('w3f-subject') as HTMLInputElement | null;
+  const enquiry = document.getElementById('cf-subject') as HTMLSelectElement | null;
+  const msg = document.getElementById('cf-msg');
+  const submit = document.getElementById('cf-submit') as HTMLButtonElement | null;
+
+  if (keyField) keyField.value = KEY;
+
+  const show = (text: string, ok: boolean) => {
+    if (!msg) return;
+    msg.textContent = text;
+    msg.classList.remove('hidden');
+    msg.style.color = ok ? '#1f7a3d' : '#b3261e';
+  };
+
+  // Keep the Web3Forms email subject in sync with the chosen enquiry type.
+  const syncSubject = () => {
+    if (subjectField && enquiry)
+      subjectField.value = `Website enquiry — ${enquiry.value}`;
+  };
+  enquiry?.addEventListener('change', syncSubject);
+  syncSubject();
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      show('Please fill in all required fields.', false);
+      form.reportValidity();
+      return;
+    }
+    if (KEY === 'YOUR_WEB3FORMS_KEY') {
+      show(
+        'The contact form is not yet configured. Add a Web3Forms key — see the README.',
+        false,
+      );
+      return;
+    }
+
+    if (submit) submit.disabled = true;
+    show('Sending…', true);
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form))),
+      });
+      const data = await res.json();
+      if (data.success) {
+        show('Thank you — your message has been sent. We will be in touch.', true);
+        form.reset();
+        syncSubject();
+      } else {
+        throw new Error(data.message || 'failed');
+      }
+    } catch {
+      show('Sorry — your message could not be sent. Please email us directly.', false);
+    } finally {
+      if (submit) submit.disabled = false;
+    }
+  });
+</script>

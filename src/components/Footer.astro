@@ -1,0 +1,73 @@
+---
+import { NAV, CONTACT, SITE } from '../consts';
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-navy text-cream">
+  <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <div class="grid gap-10 md:grid-cols-4">
+      <!-- Brand -->
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-3">
+          <span
+            class="flex h-10 w-10 items-center justify-center rounded-sm bg-gold font-serif text-xl font-extrabold text-navy"
+            >OA</span
+          >
+          <span class="font-serif text-lg font-bold">Offshore Africa Magazine</span>
+        </div>
+        <p class="mt-4 max-w-md text-sm leading-relaxed text-cream/70">
+          {SITE.description}
+        </p>
+        <a
+          href={CONTACT.instagramUrl}
+          class="label mt-5 inline-flex items-center gap-2 text-xs text-gold hover:text-cream"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 2.16c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85C2.4 3.92 3.92 2.38 7.15 2.23 8.42 2.17 8.8 2.16 12 2.16zm0 3.68a6.16 6.16 0 100 12.32 6.16 6.16 0 000-12.32zM12 16a4 4 0 110-8 4 4 0 010 8zm6.4-10.85a1.44 1.44 0 100 2.88 1.44 1.44 0 000-2.88z"
+            ></path>
+          </svg>
+          @{CONTACT.instagram}
+        </a>
+      </div>
+
+      <!-- Navigate -->
+      <div>
+        <h2 class="label text-xs text-gold">Navigate</h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          {
+            NAV.map((item) => (
+              <li>
+                <a href={item.href} class="text-cream/75 hover:text-gold">
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h2 class="label text-xs text-gold">Contact</h2>
+        <ul class="mt-4 space-y-2 text-sm text-cream/75">
+          <li>
+            <a href={`mailto:${CONTACT.email}`} class="hover:text-gold">{CONTACT.email}</a>
+          </li>
+          <li><a href={`tel:${CONTACT.phonePrimary.replace(/[^+\d]/g, '')}`} class="hover:text-gold">{CONTACT.phonePrimary}</a></li>
+          <li><a href={`tel:${CONTACT.phoneSecondary.replace(/[^+\d]/g, '')}`} class="hover:text-gold">{CONTACT.phoneSecondary}</a></li>
+          <li class="pt-1 text-cream/60">{CONTACT.address}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div
+      class="mt-12 flex flex-col gap-2 border-t border-cream/10 pt-6 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>&copy; {year} {SITE.name}. All rights reserved.</p>
+      <p>Africa's premier monthly energy &amp; mining publication.</p>
+    </div>
+  </div>
+</footer>

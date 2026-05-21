@@ -1,0 +1,177 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import CategoryFilter from '../../components/CategoryFilter.astro';
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
+
+const articles = (await getCollection('articles')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<Base
+  title="Articles"
+  description="Expert analysis and reporting on Africa's energy, mining, oil and gas industries from Offshore Africa Magazine."
+>
+  <!-- Hero banner -->
+  <section class="bg-navy text-cream seismic-bg">
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <p class="label flex items-center gap-3 text-xs text-gold">
+        <span class="h-px w-10 bg-gold"></span>Analysis &amp; Reporting
+      </p>
+      <h1 class="mt-4 font-serif text-4xl font-extrabold sm:text-5xl">Articles</h1>
+      <p class="mt-4 max-w-2xl text-lg text-cream/75">
+        In-depth coverage of the developments shaping African energy and mining.
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Search -->
+    <div class="mb-6">
+      <label for="article-search" class="sr-only">Search articles</label>
+      <input
+        id="article-search"
+        type="search"
+        placeholder="Search articles…"
+        class="w-full max-w-md rounded-sm border border-charcoal/20 bg-white px-4 py-3 text-sm focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/40"
+      />
+    </div>
+
+    <!-- Category filter -->
+    <CategoryFilter />
+
+    <!-- Grid -->
+    <div id="article-grid" class="mt-9 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        articles.map((article) => (
+          <div
+            class="article-item"
+            data-category={article.data.category}
+            data-search={`${article.data.title} ${article.data.excerpt} ${article.data.category}`.toLowerCase()}
+          >
+            <ArticleCard article={article} />
+          </div>
+        ))
+      }
+    </div>
+
+    <p id="no-results" class="mt-12 hidden text-center text-charcoal/60">
+      No articles match your search. Try a different term or category.
+    </p>
+
+    <!-- Pagination -->
+    <nav
+      id="pagination"
+      class="mt-12 hidden items-center justify-center gap-3"
+      aria-label="Article pages"
+    >
+      <button
+        id="prev-page"
+        class="label rounded-sm border border-charcoal/20 px-4 py-2 text-xs text-navy disabled:opacity-40"
+        >&larr; Prev</button
+      >
+      <span id="page-info" class="label text-xs text-charcoal/70"></span>
+      <button
+        id="next-page"
+        class="label rounded-sm border border-charcoal/20 px-4 py-2 text-xs text-navy disabled:opacity-40"
+        >Next &rarr;</button
+      >
+    </nav>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <NewsletterSignup />
+  </section>
+</Base>
+
+<script>
+  const PER_PAGE = 12;
+  const items = Array.from(
+    document.querySelectorAll<HTMLElement>('.article-item'),
+  );
+  const filterBtns = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('.filter-btn'),
+  );
+  const search = document.getElementById('article-search') as HTMLInputElement;
+  const noResults = document.getElementById('no-results');
+  const pagination = document.getElementById('pagination');
+  const prevBtn = document.getElementById('prev-page') as HTMLButtonElement;
+  const nextBtn = document.getElementById('next-page') as HTMLButtonElement;
+  const pageInfo = document.getElementById('page-info');
+
+  let category = 'All';
+  let query = '';
+  let page = 1;
+
+  const matches = (el: HTMLElement) =>
+    (category === 'All' || el.dataset.category === category) &&
+    (query === '' || (el.dataset.search || '').includes(query));
+
+  function render() {
+    const visible = items.filter(matches);
+    const pages = Math.max(1, Math.ceil(visible.length / PER_PAGE));
+    page = Math.min(page, pages);
+
+    items.forEach((el) => (el.style.display = 'none'));
+    visible
+      .slice((page - 1) * PER_PAGE, page * PER_PAGE)
+      .forEach((el) => (el.style.display = ''));
+
+    noResults?.classList.toggle('hidden', visible.length > 0);
+
+    if (pagination) {
+      pagination.classList.toggle('flex', visible.length > PER_PAGE);
+      pagination.classList.toggle('hidden', visible.length <= PER_PAGE);
+    }
+    if (pageInfo) pageInfo.textContent = `Page ${page} of ${pages}`;
+    prevBtn.disabled = page <= 1;
+    nextBtn.disabled = page >= pages;
+  }
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      category = btn.dataset.category || 'All';
+      page = 1;
+      filterBtns.forEach((b) => {
+        const on = b === btn;
+        b.setAttribute('aria-pressed', String(on));
+        b.classList.toggle('bg-navy', on);
+        b.classList.toggle('text-cream', on);
+        b.classList.toggle('border-navy', on);
+        b.classList.toggle('bg-white', !on);
+        b.classList.toggle('text-navy', !on);
+        b.classList.toggle('border-charcoal/20', !on);
+      });
+      render();
+    });
+  });
+
+  search?.addEventListener('input', () => {
+    query = search.value.trim().toLowerCase();
+    page = 1;
+    render();
+  });
+
+  prevBtn?.addEventListener('click', () => {
+    page--;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  nextBtn?.addEventListener('click', () => {
+    page++;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Honour ?category= from the homepage industry-section links.
+  const fromUrl = new URLSearchParams(location.search).get('category');
+  if (fromUrl) {
+    const btn = filterBtns.find((b) => b.dataset.category === fromUrl);
+    if (btn) btn.click();
+    else render();
+  } else {
+    render();
+  }
+</script>
