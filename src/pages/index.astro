@@ -84,29 +84,41 @@ const recentIssues = issues.slice(0, 3);
   <!-- Featured issue -->
   <section class="bg-navy text-cream seismic-bg">
     <div class="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8">
-      <!-- Cover placeholder -->
+      <!-- Cover -->
       <div class="mx-auto w-full max-w-sm">
-        <div
-          class="aspect-[3/4] rounded-sm border border-gold/30 bg-navy-700 p-8 shadow-2xl"
-        >
-          <div class="flex h-full flex-col">
-            <p class="label text-xs text-gold">Offshore Africa</p>
-            <p class="label text-[0.6rem] text-cream/55">
-              Energy &middot; Mining &middot; Oil &amp; Gas
-            </p>
-            <div class="my-auto">
-              <p class="font-serif text-5xl font-extrabold leading-none text-gold">
-                {featuredIssue.data.title.split(' ')[0]}
-              </p>
-              <p class="font-serif text-3xl font-bold text-cream/90">
-                {featuredIssue.data.title.split(' ')[1]}
-              </p>
+        {
+          featuredIssue.data.cover ? (
+            <a href={featuredIssue.data.pdf} target="_blank" rel="noopener noreferrer">
+              <img
+                src={featuredIssue.data.cover}
+                alt={`Offshore Africa — ${featuredIssue.data.title} cover`}
+                width="800"
+                height="1131"
+                class="aspect-[3/4] w-full rounded-sm border border-gold/30 object-cover shadow-2xl"
+              />
+            </a>
+          ) : (
+            <div class="aspect-[3/4] rounded-sm border border-gold/30 bg-navy-700 p-8 shadow-2xl">
+              <div class="flex h-full flex-col">
+                <p class="label text-xs text-gold">Offshore Africa</p>
+                <p class="label text-[0.6rem] text-cream/55">
+                  Energy &middot; Mining &middot; Oil &amp; Gas
+                </p>
+                <div class="my-auto">
+                  <p class="font-serif text-5xl font-extrabold leading-none text-gold">
+                    {featuredIssue.data.title.split(' ')[0]}
+                  </p>
+                  <p class="font-serif text-3xl font-bold text-cream/90">
+                    {featuredIssue.data.title.split(' ')[1]}
+                  </p>
+                </div>
+                <div class="mt-auto border-t border-gold/30 pt-3">
+                  <p class="label text-[0.6rem] text-cream/70">Current Issue</p>
+                </div>
+              </div>
             </div>
-            <div class="mt-auto border-t border-gold/30 pt-3">
-              <p class="label text-[0.6rem] text-cream/70">Current Issue</p>
-            </div>
-          </div>
-        </div>
+          )
+        }
       </div>
 
       <div>

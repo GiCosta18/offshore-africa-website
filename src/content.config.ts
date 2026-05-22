@@ -32,6 +32,7 @@ const issues = defineCollection({
     date: z.date(),
     pdf: z.string(),
     pdfSize: z.string(),
+    cover: z.string().optional(),
     featured: z.boolean().default(false),
   }),
 });
